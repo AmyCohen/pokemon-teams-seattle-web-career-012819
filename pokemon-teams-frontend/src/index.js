@@ -14,21 +14,23 @@
 <button data-trainer-id="1">Add Pokemon</button>
 <ul>
   <li>Jacey (Kakuna) <button class="release" data-pokemon-id="140">Release</button></li>
-  <li>Zachariah (Ditto) <button class="release" data-pokemon-id="141">Release</button></li>
-  <li>Mittie (Farfetch'd) <button class="release" data-pokemon-id="149">Release</button></li>
-  <li>Rosetta (Eevee) <button class="release" data-pokemon-id="150">Release</button></li>
-  <li>Rod (Beedrill) <button class="release" data-pokemon-id="151">Release</button></li>
 </ul>
 </div> */}
 //////// CARD EXAMPLE /////////
+
 let trainerObj = {}
+
+// let getTrainers = () => {
+//   return fetch(TRAINERS_URL)
+//   .then(response => response.json())  
+// }
 
 fetch(TRAINERS_URL)
 .then(response => response.json())
-.then(trainers => displayTrainers(trainers))
-// .then(trainers => {
-  // trainerObj = Object.assign({}, trainers)
-// })
+.then(trainers => {displayTrainers(trainers)
+  trainerObj = Object.assign({}, trainers)
+  console.log(trainerObj)
+})
 
 const trainerCard = document.getElementById('trainer-container')
 
@@ -55,6 +57,7 @@ function displayTrainers(trainers) {
     let addButton = document.createElement('button')
     addButton.setAttribute('data-trainer-id', trainer.id)
     addButton.name = 'Add Pokemon'
+    addButton.addEventListener('click', addPokemon)
 
     //append the button to the div
     divCard.appendChild(addButton)
@@ -74,6 +77,7 @@ function displayTrainers(trainers) {
       releaseButton.classList.add('release')
       releaseButton.setAttribute('data-pokemon-id', pokemon.id)
       releaseButton.name = 'Release'
+      releaseButton.addEventListener('click', releasePokemon)
 
       //append the button to the li
       li.append(releaseButton)
@@ -85,17 +89,53 @@ function displayTrainers(trainers) {
   }
 }
 
-
-
-
 //  OBJECTIVE:
 //  Whenever a user hits Add Pokemon and they have space on their team, they            should get a new Pokemon.
 //  ACTION ITEMS:
-//  Check to see how many pokemon are on the current trainer's deck
+//  UPDATE: --> done automatically <-- Check to see how many pokemon are on the current trainer's deck
 //  Be able to add a pokemon with an id to add to the team roster
+
+
+function addPokemon(event){
+  let trainerID = event.target.dataset.trainerId
+  console.log(trainerID)
+
+return fetch(POKEMONS_URL, {
+  method: "POST",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    'trainer_id': trainerID
+  })
+})
+.then(res => res.json())
+.then(data => displayTrainers(data))
+.then(document.location.reload())
+}
 
 //  OBJECTIVE:
 //  Whenever a user hits Release Pokemon on a specific Pokemon team, that specific      Pokemon should be released from the team.
 //  ACTION ITEMS:
 //  "release" means "delete"
 //  be able to have the delete function on just that specific pokemon
+function releasePokemon(event) {
+  let pokemonID = event.target.dataset.pokemonId
+  console.log(pokemonID)
+
+//must use string interpolation with the tick marks NOT single quotes
+return fetch(`${POKEMONS_URL}/${pokemonID}`, {
+  method: "DELETE",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    'pokemon_id': pokemonID
+  })
+})
+.then(res => res.json())
+.then(data => console.log(data))
+.then(document.location.reload())
+}
+
+
