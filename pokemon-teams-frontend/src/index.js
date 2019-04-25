@@ -1,224 +1,141 @@
-document.addEventListener('DOMContentLoaded', () => {
   const BASE_URL = "http://localhost:3000"
   const TRAINERS_URL = `${BASE_URL}/trainers`
   const POKEMONS_URL = `${BASE_URL}/pokemons`
 
-  const trainerContainer = document.querySelector('#trainer-container')
-
-  let trainers = []
-  console.log(trainerContainer)
-
-  trainerContainer.addEventListener('click', (event) => {
-    // console.log(event.target)
-    // debugger
-    // let's try to release that pokemon to the wild aka DELETE
-    if (event.target.className === "release") {
-      // debugger
-      // here before the fetch or talking to our mailman
-      // we do our behavoir
-      // behavior right now is deleting or removing the particular pokemon
-
-
-      const config = {
-        method: "DELETE"
-      }
-
-      fetch(`${POKEMONS_URL}/${event.target.dataset.pokemonId}`, config)
-        .then(response => response.json())
-        .then(data => {
-          event.target.parentElement.remove()
-          console.log(data)
-        })
-    }
-  })
-
-  const getTrainersAndRenderAndAddEventListenersAndEtc = () => {
-    trainerContainer.innerHTML = ''
-
-    fetch(TRAINERS_URL)
-      .then(response => response.json())
-      .then(data => {
-        // console.log(data)
-        // maybe we render one trainer
-
-        data.forEach(trainer => {
-          // console.log(trainer)
-          const trainerCard = document.createElement('div')
-          trainerCard.dataset.id = trainer.id
-          trainerCard.className = "card"
-
-          trainerCard.innerHTML = `
-            <p>${trainer.name}</p>
-            <button data-trainer-id="${trainer.id}">Add Pokemon</button>
-            <ul id=trainer-card-ul-${trainer.id}>
-
-            </ul>
-          `
-
-          const addPokemon = trainerCard.querySelector('button')
-          addPokemon.addEventListener('click', (event) => {
-            // console.log('CLICKED THE ADD POKEMON BUTTON')
-            // check to see the number of pokemons we have
-            // be able to fetch to the post pokemon route provided
-            // how does this backend work???
-            // POST /pokemons
-
-            // console.log('trainer id', trainer.id);
-            const config = {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                 trainer_id: trainer.id
-              })
-            }
-
-            fetch(POKEMONS_URL, config)
-              .then(response => response.json())
-              .then(data => {
-                console.log(data)
-
-                getTrainersAndRenderAndAddEventListenersAndEtc()
-              }) // end of the fetch
-
-
-          })
-
-
-
-          // console.log(trainer.pokemons)
-          trainer.pokemons.forEach(pokemon => {
-            const trainerCardUl = trainerCard.querySelector('ul')
-            // console.log(trainerCardUl)
-            const pokemonLi = document.createElement('li')
-            // button is inside of this li
-            const releaseButton = document.createElement('button')
-
-
-            releaseButton.innerText = 'Release'
-
-            releaseButton.className = 'release'
-            releaseButton.dataset.pokemonId = pokemon.id
-            // debugger
-            // <li>Jacey (Kakuna) <button class="release" data-pokemon-id="140">Release</button></li>
-            pokemonLi.innerText = `${pokemon.nickname} (${pokemon.species})`
-
-            // append release button to the Li
-            pokemonLi.append(releaseButton)
-
-            // append each Li to the trainer card ul
-            trainerCardUl.append(pokemonLi)
-          })
-
-          // <li>Zachariah (Ditto) <button class="release" data-pokemon-id="141">Release</button></li>
-          // <li>Mittie (Farfetch'd) <button class="release" data-pokemon-id="149">Release</button></li>
-          // <li>Rosetta (Eevee) <button class="release" data-pokemon-id="150">Release</button></li>
-          // <li>Rod (Beedrill) <button class="release" data-pokemon-id="151">Release</button></li>
-          trainerContainer.append(trainerCard)
-        })
-        // <div class="card" data-id="1"><p>Prince</p>
-        //   <button data-trainer-id="1">Add Pokemon</button>
-        //   <ul>
-        //     <li>Jacey (Kakuna) <button class="release" data-pokemon-id="140">Release</button></li>
-        //     <li>Zachariah (Ditto) <button class="release" data-pokemon-id="141">Release</button></li>
-        //     <li>Mittie (Farfetch'd) <button class="release" data-pokemon-id="149">Release</button></li>
-        //     <li>Rosetta (Eevee) <button class="release" data-pokemon-id="150">Release</button></li>
-        //     <li>Rod (Beedrill) <button class="release" data-pokemon-id="151">Release</button></li>
-        //   </ul>
-        // </div>
-        // trainers = data
-        // trainers.forEach(renderTrainer)
-      })
-  }
-
-  getTrainersAndRenderAndAddEventListenersAndEtc()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // const renderTrainer = (trainer) => {
-  //   const trainerCard = document.createElement('div')
-  //   trainerCard.dataset.id = trainer.id
-  //   trainerCard.className = "card"
-  //   trainerCard.innerHTML = `
-  //     <p>${trainer.name}</p>
-  //     <button data-trainer-id="1">Add Pokemon</button>
-  //     <ul>
-  //       <li>Jacey (Kakuna) <button class="release" data-pokemon-id="140">Release</button></li>
-  //       <li>Zachariah (Ditto) <button class="release" data-pokemon-id="141">Release</button></li>
-  //       <li>Mittie (Farfetch'd) <button class="release" data-pokemon-id="149">Release</button></li>
-  //       <li>Rosetta (Eevee) <button class="release" data-pokemon-id="150">Release</button></li>
-  //       <li>Rod (Beedrill) <button class="release" data-pokemon-id="151">Release</button></li>
-  //     </ul>
-  //   `
-  //
-  //   trainerContainer.append(trainerCard)
-  // }
-
-
+//  OBJECTIVE:
+//  When a user loads the page, they should see all trainers, with their current        team of Pokemon.
+//  ACTION ITEMS:
+//  fetch the infomation
+//  parse the informatoin
+//  fill the html with the information
+
+//////// CARD EXAMPLE /////////
+{/* <div class="card" data-id="1"><p>Prince</p>
+<button data-trainer-id="1">Add Pokemon</button>
+<ul>
+  <li>Jacey (Kakuna) <button class="release" data-pokemon-id="140">Release</button></li>
+</ul>
+</div> */}
+//////// CARD EXAMPLE /////////
+
+let trainerObj = {}
+
+// let getTrainers = () => {
+//   return fetch(TRAINERS_URL)
+//   .then(response => response.json())  
+// }
+
+fetch(TRAINERS_URL)
+.then(response => response.json())
+.then(trainers => {displayTrainers(trainers)
+  trainerObj = Object.assign({}, trainers)
+  console.log(trainerObj)
 })
+
+const trainerCard = document.getElementById('trainer-container')
+
+function displayTrainers(trainers) {
+  console.log(trainers)
+  console.log(trainers.length)
+  
+  for (let i = 0; i < trainers.length; i++) {
+    let trainer = Object.entries(trainers)[i][1]
+    
+    //create the div and add a class and an id
+    const divCard = document.createElement('div')
+    divCard.classList.add('card')
+    divCard.setAttribute('data-id', trainer.id)
+
+    //create the p tag to add the trainer's name
+    let pName = document.createElement('p')
+    pName.textContent = trainer.name
+
+    //append the p tag to the div
+    divCard.appendChild(pName)
+  
+    //create a button and add an id and set the name
+    let addButton = document.createElement('button')
+    addButton.setAttribute('data-trainer-id', trainer.id)
+    addButton.name = 'Add Pokemon'
+    addButton.addEventListener('click', addPokemon)
+
+    //append the button to the div
+    divCard.appendChild(addButton)
+
+    //create ul element
+    let ul = document.createElement('ul')
+
+    //-->this is where the loop to get the pokemon go<--
+    for (let j = 0; j < trainer.pokemons.length; j++) {
+      let pokemon = trainer.pokemons[j]
+      //create li element
+      let li = document.createElement('li')
+      li.textContent = pokemon.nickname + " (" + pokemon.species + ")"
+
+      //create a button and add an id and class and set the name
+      let releaseButton = document.createElement('button')
+      releaseButton.classList.add('release')
+      releaseButton.setAttribute('data-pokemon-id', pokemon.id)
+      releaseButton.name = 'Release'
+      releaseButton.addEventListener('click', releasePokemon)
+
+      //append the button to the li
+      li.append(releaseButton)
+      ul.appendChild(li)
+    }
+
+    divCard.appendChild(ul)
+    trainerCard.appendChild(divCard)
+  }
+}
+
+//  OBJECTIVE:
+//  Whenever a user hits Add Pokemon and they have space on their team, they            should get a new Pokemon.
+//  ACTION ITEMS:
+//  UPDATE: --> done automatically <-- Check to see how many pokemon are on the current trainer's deck
+//  Be able to add a pokemon with an id to add to the team roster
+
+
+function addPokemon(event){
+  let trainerID = event.target.dataset.trainerId
+  console.log(trainerID)
+
+return fetch(POKEMONS_URL, {
+  method: "POST",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    'trainer_id': trainerID
+  })
+})
+.then(res => res.json())
+.then(data => displayTrainers(data))
+.then(document.location.reload())
+}
+
+//  OBJECTIVE:
+//  Whenever a user hits Release Pokemon on a specific Pokemon team, that specific      Pokemon should be released from the team.
+//  ACTION ITEMS:
+//  "release" means "delete"
+//  be able to have the delete function on just that specific pokemon
+function releasePokemon(event) {
+  let pokemonID = event.target.dataset.pokemonId
+  console.log(pokemonID)
+
+//must use string interpolation with the tick marks NOT single quotes
+return fetch(`${POKEMONS_URL}/${pokemonID}`, {
+  method: "DELETE",
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    'pokemon_id': pokemonID
+  })
+})
+.then(res => res.json())
+.then(data => console.log(data))
+.then(document.location.reload())
+}
+
+
